@@ -1,0 +1,11 @@
+﻿feature
+pre_mmol_sum
+temperature
+pre_2_mmol
+pair_sum_TPSA
+temp_over_time
+pre_mmol_diff_abs
+solv_dielectric
+solv_polarity_index
+qy_reagent_ratio_x_hetero
+qy_temp_x_pair_total_hetero
