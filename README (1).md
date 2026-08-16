@@ -257,24 +257,6 @@ For GPU execution, install the appropriate PyTorch build for the local CUDA vers
 - Generated run directories contain configuration manifests, selected feature lists, model files, fold-level metrics, predictions, and figures.
 - Large generated models and intermediate candidate tables may be released through an archival repository if they exceed GitHub file-size limits.
 
-## Data and code availability
-
-The initial dataset, prospective active-learning history, molecular-structure mapping, selected feature lists, analysis scripts, and plotting code required to reproduce the reported results are provided in this repository. Trained model checkpoints and complete machine-readable outputs should be deposited in the GitHub release or a permanent archive and linked here before publication.
-
-Repository: `https://github.com/<OWNER>/<REPOSITORY>`  
-Archived release/DOI: `<TO BE ADDED>`
-
-## Citation
-
-If you use this workflow, please cite the associated article:
-
-```bibtex
-@article{<citation_key>,
-  title   = {<article title>},
-  author  = {<authors>},
-  journal = {<journal>},
-  year    = {<year>},
-  doi     = {<doi>}
 }
 ```
 
