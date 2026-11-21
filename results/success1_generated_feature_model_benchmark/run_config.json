@@ -1,0 +1,30 @@
+{
+  "initial_data_file": "./data/output_with_molar_amount_pubchem.xlsx",
+  "smiles_file": "./data/compound_smiles.xlsx",
+  "output_dir": "./success1_generated_feature_model_benchmark",
+  "n_splits": 5,
+  "n_repeats": 3,
+  "cv_seed": 42,
+  "nn_epochs": 300,
+  "nn_batch_size": 32,
+  "nn_lr": 0.002,
+  "nn_weight_decay": 0.0001,
+  "nn_patience": 30,
+  "nn_grad_clip": 1.0,
+  "cb_iterations": 2000,
+  "cb_learning_rate": 0.05,
+  "cb_depth": 4,
+  "cb_l2_leaf_reg": 5.0,
+  "cb_random_strength": 1.0,
+  "cb_subsample": 0.9,
+  "cb_early_stopping_rounds": 100,
+  "dpi": 300,
+  "split_methods": [
+    "random",
+    "pair_grouped",
+    "leave_one_pair_out"
+  ],
+  "grouped_repeats": 3,
+  "run_leave_one_pair_out": true,
+  "interpretation": "Fixed preselected features/architecture/weights; results do not constitute independent nested selection evaluation."
+}

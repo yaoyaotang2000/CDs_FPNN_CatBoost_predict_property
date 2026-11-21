@@ -1,0 +1,115 @@
+{
+  "sensitivity": {
+    "search_script_path": "./03_ax_bo_search_cycle_success.py",
+    "training_script_path": "./02_train_fp_catboost_cycle_success_selected_features.py",
+    "output_dir": "./ax_fpnn_catboost_weight_sensitivity_results",
+    "alpha_grid": [
+      0.1,
+      0.3,
+      0.5,
+      0.7,
+      0.9
+    ],
+    "fixed_beta": 0.2,
+    "run_beta_sensitivity": true,
+    "beta_grid": [
+      0.0,
+      0.1,
+      0.2
+    ],
+    "total_trials": 100,
+    "replicate_seeds": [
+      42,
+      43,
+      44
+    ],
+    "success_column": "success",
+    "successful_label": 1,
+    "require_success_column": true,
+    "top_k": 10,
+    "colors": [
+      "Blue",
+      "Green",
+      "Yellow",
+      "Orange"
+    ],
+    "color_windows": {
+      "Blue": [
+        440.0,
+        480.0
+      ],
+      "Green": [
+        500.0,
+        540.0
+      ],
+      "Yellow": [
+        560.0,
+        580.0
+      ],
+      "Orange": [
+        580.0,
+        630.0
+      ]
+    },
+    "qy_target_percent": 20.0,
+    "stokes_target_nm": 80.0,
+    "reference_alpha": 0.7,
+    "reference_beta": 0.2,
+    "paired_random_seed": true,
+    "random_seed": 42,
+    "enforce_pair_diversity": false,
+    "dpi": 400,
+    "require_success_model": true,
+    "warn_if_single_seed": true
+  },
+  "cycle": 17,
+  "original_search": {
+    "cycle": 17,
+    "precursor_mass": [
+      0.2,
+      0.4,
+      0.6,
+      0.8,
+      1.0
+    ],
+    "temperature_values": [
+      160,
+      180,
+      200,
+      220
+    ],
+    "time_values": [
+      4,
+      6,
+      8
+    ],
+    "allow_same_precursor": true,
+    "reagent_1_mL": 15.0,
+    "total_trials": 200,
+    "runs_per_color": 5,
+    "batch_select_per_color": 1,
+    "alpha": 0.7,
+    "color_softness_nm": 10,
+    "qy_min_percent": 0.0,
+    "qy_max_percent": 100.0,
+    "stokes_min_nm": 40.0,
+    "stokes_max_nm": 180.0,
+    "objective_mode": "ucb_score",
+    "ucb_beta": 0.2,
+    "use_success_probability": true,
+    "use_success_hard_gate": true,
+    "success_min_probability": 0.5,
+    "exclude_tested_recipes": true,
+    "duplicate_key_mode": "unordered_pair",
+    "recipe_key_decimals": 4,
+    "use_offline_stopping": true,
+    "min_cycles": 3,
+    "max_cycles": 16,
+    "patience_cycles": 4,
+    "abs_tolerance": 0.02,
+    "rel_tolerance": 0.03,
+    "score_noise_floor": 0.02,
+    "random_seed": 42,
+    "dpi": 300
+  }
+}

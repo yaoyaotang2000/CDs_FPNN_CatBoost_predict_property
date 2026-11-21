@@ -1,0 +1,13 @@
+Target,Repeat,UCB_hit_rate_percent,Greedy_hit_rate_percent,UCB_minus_Greedy_percentage_points
+Blue,1,40.0,40.0,0.0
+Blue,2,40.0,40.0,0.0
+Blue,3,40.0,40.0,0.0
+Green,1,10.0,0.0,10.0
+Green,2,0.0,0.0,0.0
+Green,3,20.0,20.0,0.0
+Yellow,1,60.0,60.0,0.0
+Yellow,2,60.0,60.0,0.0
+Yellow,3,70.0,60.0,9.999999999999998
+Orange,1,60.0,60.0,0.0
+Orange,2,70.0,70.0,0.0
+Orange,3,70.0,70.0,0.0

@@ -1,45 +1,19 @@
 # CDs_FPNN_CatBoost_predict_property
-# Success-Constrained FPNN–CatBoost and BO–UCB for Closed-Loop Carbon-Dot Discovery
 
-This repository contains the data-processing, surrogate-model training, Bayesian-optimization, active-learning, sensitivity-analysis, and evaluation code associated with our closed-loop discovery workflow for carbon dots (CDs). The workflow predicts excitation wavelength (`Ex_max_nm`), emission wavelength (`Em_max_nm`), quantum yield (`QY_%`), and Stokes shift, and recommends synthesis conditions for blue-, green-, yellow-, and orange-emissive CDs.
-
-The released implementation replaces the earlier high-dimensional multimodal model with a compact fingerprint–process neural network (FPNN) and target-specific CatBoost regressors. Their predictions are combined using an equal-weight ensemble. A separate success classifier provides a feasibility constraint for Bayesian optimization (BO), while an upper-confidence-bound (UCB) term rewards informative uncertainty.
+Code and numerical data for *Ensemble Learning-Driven Closed-Loop Optimization for Accelerated Discovery of Carbon Dots*. The workflow ranks synthesis conditions for blue, green, yellow and orange emission. It predicts the excitation maximum, emission maximum and quantum yield (QY), and derives the Stokes shift from the two wavelengths.
 
 ## Workflow at a glance
 
-1. Standardize the initial experimental data and the prospectively observed history.
-2. Define synthesis success and train a five-seed CatBoost success-classifier ensemble.
-3. Retain experimentally successful rows for optical-property regression.
-4. Train the FPNN and target-specific CatBoost regressors.
-5. Form the property ensemble:
+The experimental closed loop was developed in Jupyter. Start with **[closed_loop.ipynb](closed_loop.ipynb)** after installing the dependencies below. The notebook demonstrates a saved prediction, then prepares the initial data, fits a reduced ensemble and runs a two-trial Ax search for each color. The same three computational stages can be run individually from `scripts/`.
 
-   \[
-   \hat y_{\mathrm{ens}}=0.5\hat y_{\mathrm{FPNN}}+0.5\hat y_{\mathrm{CatBoost}}.
-   \]
-
-6. Search the predefined mixed discrete synthesis space using success-constrained BO–UCB.
-7. Experimentally evaluate selected recipes, append the observations, retrain the models, and repeat.
-8. Evaluate the prospective loop using prediction errors, hit rates, Pareto-front expansion, and hypervolume gain.
+For a first check that takes no retraining, run `python run_cycle.py predict` from the repository root. For the example using DL-methionine and 2-aminoterephthalic acid, the cycle-1 fit predicts **359.82 nm excitation, 450.08 nm emission, 56.56% QY and a success score of 0.9988**.
 
 ## Repository organization
 
-The public release should use the following structure. If the scripts are currently stored under different names, rename or move them before publication while preserving their contents.
-
 ```text
 .
-├── README.md
-├── requirements.txt
-├── data/
-│   ├── output_with_molar_amount_pubchem.xlsx   # initial experiments
-│   ├── observed_history.xlsx                   # prospective AL observations
-│   └── compound_smiles.xlsx                    # precursor/solvent structures
-├── cd_catboost_feature_selection/
-│   ├── Ex_max_nm_best_top20_feature_list.csv
-│   ├── Em_max_nm_best_top35_feature_list.csv
-│   └── QY_%_best_top35_feature_list.csv
-├── model/
-│   ├── __init__.py
-│   └── model.py
+├── closed_loop.ipynb                  Jupyter entry point
+├── run_cycle.py                      prediction and complete-cycle commands
 ├── scripts/
 │   ├── 01_update_training_data_from_history.py
 │   ├── 02_train_fp_catboost_cycle.py
@@ -50,215 +24,117 @@ The public release should use the following structure. If the scripts are curren
 │   ├── explain_fpnn_catboost_ensemble.py
 │   ├── fp_process_encoder_ablation_learning_curve.py
 │   └── fp_encoder_dimension_ablation_ensemble.py
-└── outputs/                                  # generated locally; not required as input
+├── data/                             initial experiments, structures and validation endpoints
+├── cd_catboost_feature_selection/    ordered feature lists for the three properties
+├── success_feature_selection_independent/  classifier feature list
+├── model/                            model.py and package initializer
+├── workflow/                         handoff between the three numbered stages
+├── checkpoints/                      cycle-1 and cycle-17 fitted ensembles and scalers
+├── cd_cv_outputs/                    descriptor workbook used in the validation analyses
+├── feature_inputs/                   initial-data feature matrix
+├── validation/                       independent comparisons and their original model variants
+├── analysis/                         calculations added for peer review
+├── results/                          archived numerical evidence for the paper
+├── outputs/                          generated when running the documented entry points
+├── requirements.txt
+└── UPLOAD_MANIFEST.csv                paths, byte sizes and SHA-256 checksums
 ```
+
+The numbered entry points in `scripts/` contain the update, fit and search code extracted from the experimental notebook. The similarly named `02` and `03` files in `validation/` are the versions used in separate validation studies. Their callers explicitly load those versions.
 
 ## Data
 
-### Initial and prospective data
+| File | Contents and use |
+| --- | --- |
+| [Initial experiments](data/output_with_molar_amount_pubchem.xlsx) | 224 labeled recipes with synthesis conditions and optical measurements. |
+| [Compound structures](data/compound_smiles.xlsx) | Chemical names and SMILES used to construct descriptors and fingerprints. |
+| [Prospective endpoints](data/validation.csv) | Predictions and measurements for 33 in-protocol recommendations, and ensemble dispersion for the 24 rows with a verified match. Used for errors, strict hits, stopping trajectories and hypervolume. |
 
-- `data/output_with_molar_amount_pubchem.xlsx` contains the initialization experiments.
-- `data/observed_history.xlsx` contains the recipes proposed and experimentally evaluated during active learning, including cycle number, target color, predicted properties, measured properties, and success labels.
-- `data/compound_smiles.xlsx` maps chemical names to structures used by the featurizer.
-
-All row identifiers must remain stable. When an external feature table is used, rows must be joined by the explicit row identifier rather than by positional indexing.
+The release includes the initial recipes, the two trained ensembles and the numerical tables for the reported results. The laboratory's round-by-round recipe history and production logs remain local. The 33 endpoint rows support outcome analysis. Continuing the closed loop requires new measured recipes with the input fields described below.
 
 ### Success definition
 
-An experiment is labelled unsuccessful (`success = 0`) when both of the following criteria are met:
-
-- measured Stokes shift is below 80 nm; and
-- measured quantum yield is below 4%.
-
-All remaining labelled experiments are assigned `success = 1`. Optical-property regressors are trained only on `success = 1` rows. The success classifier is trained on both classes and is used only to assess feasibility during BO.
-
-The current success-classification dataset contains 224 labelled experiments (145 successful and 79 unsuccessful). Candidate features are ranked using repeated cross-validation, and the selected classifier uses the top 10 features. Five final CatBoost classifiers are trained with seeds `42`, `2024`, `3407`, `777`, and `1024`. Their mean predicted probability is reported as \(P_{\mathrm{success}}\). Candidates with \(P_{\mathrm{success}}<0.50\) are rejected during prospective search.
+The recorded `success` column supplies the training labels. In the initial workbook all 145 positive labels have QY ≥ 4%, and all 79 negative labels have QY < 4%. The regressors use the successful subset. The classifier trains on both classes with ten selected features. Its mean probability across five fitted models is an uncalibrated optical success score.
 
 ## Property surrogate model
 
-### FPNN component
+The FPNN encodes each precursor with 167 MACCS keys and 512 Avalon bits. Each 679-element fingerprint passes through a shared 128-to-32 encoder. The model combines the sum and absolute difference of the two latent vectors with an embedding of 14 synthesis features and returns three optical properties. The CatBoost models use recipe, solvent, structural and process descriptors, including radius-2, 256-bit Morgan fingerprints. The ordered feature lists contain 20 features for excitation, 35 for emission and 35 for QY.
 
-Each precursor is represented by a 679-dimensional fingerprint. A shared neural encoder maps each fingerprint through `679 → 128 → 32`. The two latent precursor vectors, \(f_1\) and \(f_2\), are combined symmetrically as
-
-\[
-[f_1+f_2,\ |f_1-f_2|],
-\]
-
-which makes the pair representation invariant to precursor order. The resulting 64-dimensional vector is processed by a `64 → 64 → 64` fusion network. Fourteen process features (solvent descriptors, temperature, reaction time, and precursor ratio) are mapped directly to 16 dimensions. The concatenated 80-dimensional representation is passed through a `80 → 64 → 3` regression head.
-
-Dropout is applied to the fingerprint encoder and regression head. Target values are standardized using statistics calculated from each training fold only.
-
-### CatBoost component
-
-CatBoost features are generated directly from the standardized recipes and molecular structures. Target-specific feature lists are used:
-
-- excitation wavelength: top 20 selected features;
-- emission wavelength: top 35 selected features;
-- quantum yield: top 35 selected features.
-
-Target columns and derived target leakage variables are excluded from the feature matrix.
-
-### Ensemble
-
-For every property, the final prediction is the arithmetic mean of the independently trained FPNN and CatBoost predictions. The 0.5/0.5 weight was selected from cross-validated comparisons with the individual models and the 0.3/0.7 and 0.7/0.3 alternatives.
+Each branch uses five fitted members in the full model. The final property estimate is the arithmetic mean of the FPNN and CatBoost branch means. The archived checkpoints include the target scaler and the feature order for the fitted models.
 
 ## Model evaluation
 
-The principal comparison uses three repeats of five-fold cross-validation (`RepeatedKFold`, 15 held-out folds) on `success = 1` data. The same fold indices are used for all models. The following models are evaluated:
-
-- FPNN;
-- CatBoost;
-- 0.3 FPNN + 0.7 CatBoost;
-- 0.5 FPNN + 0.5 CatBoost;
-- 0.7 FPNN + 0.3 CatBoost.
-
-For `Ex_max_nm`, `Em_max_nm`, and `QY_%`, the scripts report fold-level and aggregate MAE, RMSE, and \(R^2\), including mean ± sample standard deviation. Because all preprocessing and model fitting occur within each training fold, held-out observations do not influence feature scaling or fitting.
-
-Run the comparison from the repository root:
-
-```bash
+```console
 python scripts/success1_repeated_cv_generated_features.py
 ```
 
+This command compares FPNN, CatBoost and three FPNN/CatBoost mixtures (30/70, 50/50 and 70/30) on the 145 successful initial recipes, with the same 3 × 5 random cross-validation folds for all models. Outputs include held-out predictions, fold-level metrics and summaries under `outputs/random_cv/`. Selected features and architecture were informed by development data. Table S21 tests the fixed model under separate random and precursor-pair holdouts. Its script and archived pooled metrics are listed below.
+
 ## Success-constrained BO–UCB
 
-For a candidate recipe \(x\), quantum yield and Stokes shift are normalized to fixed physically meaningful ranges. The expected color-specific score is
+For each color the code normalizes QY and Stokes shift to fixed bounds of 0–100% and 40–180 nm. A Gaussian penalty with a width of 10 nm reduces the score outside the target window. The acquisition score multiplies the success probability by the sum of the expected score and β times a dispersion term derived from the ensemble. The default QY weight α is 0.70 and β is 0.20. Candidates with a success score below 0.50 have zero acquisition value.
 
-\[
-\mu_S(x)=C_{\mathrm{color}}(x)
-\left[\alpha Q(x)+(1-\alpha)\Delta(x)\right],
-\]
+The initial table contains 28 precursor identities, including polyaniline. The notebook's Ax search lists 27 identities and omits polyaniline. The two precursor positions each accept five masses (0.2–1.0 g in 0.2 g steps). There are five solvents at 15 mL, four temperatures (160–220 °C in 20 °C steps) and three durations (4, 6 or 8 h). This yields **27 × 27 × 5 × 5 × 5 × 4 × 3 = 1,093,500 ordered parameter combinations** before equivalence and previously tested recipes are considered. Identical precursor identities are allowed. Tested recipes are matched using unordered precursor–mass pairs.
 
-where \(C_{\mathrm{color}}\) measures compatibility with the target emission window, \(Q\) is normalized QY, and \(\Delta\) is normalized Stokes shift. Weight sensitivity supported \(\alpha=0.7\).
-
-Exploration is introduced through
-
-\[
-\mathrm{UCB}(x)=\mu_S(x)+\beta\sigma_S(x),
-\]
-
-where \(\sigma_S\) is estimated from prediction dispersion among independently saved ensemble members. Exploration-coefficient sensitivity supported \(\beta=0.2\). The acquisition value is
-
-\[
-A(x)=P_{\mathrm{success}}(x)
-\left[\mu_S(x)+\beta\sigma_S(x)\right].
-\]
-
-The positive uncertainty term rewards, rather than penalizes, informative uncertainty. The separate success constraint prevents this reward from directing experiments toward candidates predicted to be non-emissive or otherwise unsuccessful.
-
-### Search domain
-
-The production script searches the finite domain defined by:
-
-- two precursor identities, with identical precursor pairs optionally allowed;
-- precursor masses: 0.2, 0.4, 0.6, 0.8, or 1.0 g;
-- solvent: water, ethanol, dimethylformamide, sulfuric acid, or phosphoric acid;
-- temperature: 160, 180, 200, or 220 °C;
-- reaction time: 4, 6, or 8 h;
-- fixed solvent volume: 15 mL.
-
-Recipes already present in the expanded training data or observed history are excluded using an order-invariant recipe key. Duplicate recommendations are also removed before experimental selection.
-
-### Production Ax settings
-
-The supplied production script calls `ax.service.managed_loop.optimize`, allowing Ax to use its managed default generation strategy for the installed Ax version. The script does **not** explicitly fix the number of Sobol initialization trials, the BoTorch acquisition optimizer, `raw_samples`, or `num_restarts`; therefore, these quantities must not be reported as user-specified settings. The release environment pins the Ax version in `requirements.txt` so the default behavior is reproducible.
-
-The explicit production settings are:
-
-- 200 in-silico Ax trials per run;
-- 5 independent Ax runs per active target color and cycle;
-- 1 experimentally selected recipe per active color and cycle;
-- seed 42;
-- objective weight \(\alpha=0.7\);
-- UCB coefficient \(\beta=0.2\);
-- hard feasibility threshold \(P_{\mathrm{success}}\ge 0.50\).
-
-The 100-trial budget used in selected sensitivity experiments is a separate diagnostic setting and is not the production BO budget.
-
-Run one prospective search cycle after training:
-
-```bash
-python scripts/03_ax_bo_search_cycle.py
-```
+The final configuration calls Ax managed optimization with 200 trials per run, five runs per active color, base seed 42 and one recommendation per active color. Ax selects its generation strategy. Historical settings varied across fits. The acquisition interval for blue is 430–480 nm. The strict experimental hit definition in Table S8 uses 440–480 nm for blue, 500–540 for green, 560–580 for yellow and 580–630 for orange, inclusive for the intended target.
 
 ## Closed-loop update and stopping
 
-After experimental evaluation, append measured results to `data/observed_history.xlsx`, increment the cycle number in the configuration, and execute:
+For the initial cycle, execute these commands in order. Steps 02 and 03 automatically select the latest prepared run. Supply the printed directory using `--run-dir` to choose a specific run.
 
-```bash
-python scripts/01_update_training_data_from_history.py
-python scripts/02_train_fp_catboost_cycle.py
-python scripts/03_ax_bo_search_cycle.py
+```console
+python scripts/01_update_training_data_from_history.py --cycle 1
+python scripts/02_train_fp_catboost_cycle.py --cycle 1
+python scripts/03_ax_bo_search_cycle.py --cycle 1
 ```
 
-Stopping is evaluated independently for each target color. Search continues until an experimentally measured sample enters the target emission window. Thereafter, stopping occurs when either the maximum budget of 16 cycles is reached or no improvement larger than the noise-aware tolerance is observed for four consecutive cycles after at least three cycles:
+Alternatively, `python run_cycle.py quick` runs all three steps with one training seed, one neural-network epoch, five boosting iterations and two Ax trials per color. `python run_cycle.py cycle` uses all five seeds (42, 2024, 3407, 777, 1024), 300 epochs and 2,000 boosting iterations. Each execution starts a timestamped directory in `outputs/closed_loop_runs/`. Its `data/` subdirectory contains the run configuration, evaluated candidates and final recommendations.
 
-\[
-\tau_t=\max\left(0.02,\ 0.03S^*_{t-1},\ 0.02\right).
-\]
+After measuring a new batch, run e.g. `python run_cycle.py cycle --cycle 2 --history my_measurements.xlsx`. CSV is also supported. Include `cycle`, `target_color`, `precursor_1`, `precursor_2`, `mass_1_g`, `mass_2_g`, `pre_1_mmol`, `pre_2_mmol`, `reagent_1`, `reagent_1_mL`, `temperature`, `time_h`, `Ex_max_nm`, `Em_max_nm`, `QY_%`, `Stokes_shift_nm` and `success`. Use the workbook's compound names, temperature in °C and time in hours. Only measurements from earlier cycles enter the run snapshot for training, stopping and tested-recipe exclusion.
 
-The two 0.02 terms represent the absolute score tolerance and the score-noise floor, respectively. All evaluated experiments, including exploratory trials that do not improve the incumbent score, remain in the observed history and are used in subsequent retraining.
+Stopping is evaluated per target color once a measured emission has reached its search window. The final settings use a ceiling of 16 cycles and a patience of four cycles after at least three completed cycles. An improvement must exceed the greater of 0.02 score units and 3% of the previous best. The paper's retrospective stopping tables apply the evaluation windows to the measured endpoints. The additional seventh yellow measurement lies outside the 33-row cohort.
 
 ## Sensitivity and robustness analyses
 
-### Objective-weight and exploration sensitivity
+| Analysis | Command and scope |
+| --- | --- |
+| Objective and exploration weights (Figs. S9–S10) | `python scripts/weight_sensitivity_success_filtered_3runs.py` rescores both archived Ax-visited pools and aggregates the individual runs (three seeds per condition). Each grid is read from its saved settings. To search again with a locally trained model, supply `--run-dir` and `--study alpha` or `--study beta`. Fresh searches use 100 Ax trials per condition and seed. |
+| Interpretation (Fig. 4, Tables S18–S19) | `python scripts/explain_fpnn_catboost_ensemble.py` runs grouped permutation, CatBoost SHAP and molecular-proxy comparisons on the public cycle-1 fit and initial data. These are in-sample diagnostics. The paper's cycle-17 numerical results are in `results/interpretation/`. To repeat that calculation with the corresponding local data, supply the cycle-17 checkpoint via `--run-dir` and its recipe table via `--expanded-training-file`. |
+| Process encoder and learning curves | `python scripts/fp_process_encoder_ablation_learning_curve.py` varies the process encoder and training fraction. |
+| Fingerprint architecture | `python scripts/fp_encoder_dimension_ablation_ensemble.py` compares eight encoders with the CatBoost component held fixed for each fold. Both encoder entry points default to initial data. Use `--history` with the matching local recipe workbook for the expanded retrospective cohort. Saved study outputs are under `results/`. |
+| Pareto fronts (Fig. 3, Table S15) | `python scripts/analyze_history_pareto_hv.py` combines the initial experiments and public endpoints, with 3,000 bootstrap samples and seed 2026. Expected pooled normalized hypervolume increases from 0.48830 to 0.53161, a gain of 0.04331 (8.87%). |
 
-```bash
-python scripts/weight_sensitivity_success_filtered_3runs.py
-```
+### Paper figures and additional review analyses
 
-The sensitivity workflow filters property-regression data to `success = 1`, uses 100 BO trials per condition, repeats each condition with three independent seeds, and reports mean ± SD. These runs support the choices \(\alpha=0.7\) and \(\beta=0.2\); they do not replace the production search budget described above.
+| Result | Reproduction |
+| --- | --- |
+| Fig. 2, Figs. S4–S8 | `validation/fp_process_catboost_ensemble_cv_success_only.py` and the modality, feature-count and encoder studies provide the corresponding model comparisons. The retrospective success-filter comparison in Fig. S4 used 257 labeled rows, of which 178 were successful. Its summary is in `results/success_filter_comparison/`. |
+| Fig. 3, Fig. S17, Tables S10–S17 | `python -m analysis.tables_figures` recalculates strict hits (23/33), errors by stage, and the dispersion–error association on 24 matched rows. The emission MAE is 23.30 nm at table precision and 23.28 nm with unrounded predictions. `python -m analysis.stopping --no-plots --output-dir outputs/stopping` reconstructs the per-color stopping trajectories. |
+| Fig. S11 and Table S24 | `python -m analysis.tables_figures` also summarizes the saved 20-repeat trajectories. UCB and greedy each achieve a 40.75% mean top-decile hit rate. A new search can be run with `python -m validation.ensemble_fpnn_catboost_reviewer_benchmark_complete_v2 --run-mode standard`. The separate three-repeat study in `results/ucb_vs_greedy_reviewer_analysis/` supplies response Table R1. |
+| Table S21 | `python -m validation.compare_random_vs_precursor_grouped_success` compares random, grouped and leave-one-precursor-pair-out splits. Archived fold membership, held-out predictions and per-repeat metrics are in `results/success1_generated_feature_model_benchmark/`. |
+| Table S22 | `python -m analysis.paired_models gate` holds the property predictions fixed and evaluates three success-scoring policies across three stratified 65/35 splits and four color tasks. Each policy selects ten candidates per task and split. |
+| Table S23 | `python -m analysis.paired_models heads` compares a three-output FPNN with three independent single-output FPNNs on 145 successful recipes and the same 15 outer folds. |
 
-### Model interpretation
-
-```bash
-python scripts/explain_fpnn_catboost_ensemble.py
-```
-
-The interpretation workflow reports grouped permutation importance for the complete ensemble, native CatBoost SHAP contributions, component performance, and comparisons with simple molecular-proxy models. These analyses describe predictive associations and should not be interpreted as causal mechanistic evidence.
-
-### Architecture and learning-curve analyses
-
-```bash
-python scripts/fp_process_encoder_ablation_learning_curve.py
-python scripts/fp_encoder_dimension_ablation_ensemble.py
-```
-
-These scripts compare process-encoder depth/width, fingerprint bottleneck dimensions, precursor-fusion strategies, and performance as a function of training-set size using fixed held-out folds.
-
-### Pareto-front and hypervolume evaluation
-
-```bash
-python scripts/analyze_history_pareto_hv.py \
-  --initial data/output_with_molar_amount_pubchem.xlsx \
-  --history data/observed_history.xlsx
-```
-
-This analysis compares the experimentally observed initialization and cumulative post-optimization Pareto fronts using measured QY and Stokes shift. It reports pooled and color-resolved Pareto counts, normalized hypervolume, bootstrap confidence intervals, absolute gain, and relative gain.
+The new review calculations write to `outputs/revision/`. The numerical results supplied with the manuscript are in `results/revision/`. Some original development scripts in `validation/` write to their own output directories or regenerate feature lists. Use a separate checkout when repeating feature selection.
 
 ## Installation
 
-Python 3.10 is recommended. Create a clean environment and install the pinned dependencies:
+Use Python 3.10. The verification environment used Python 3.10.16 on Windows. Run these commands from the repository root.
 
-```bash
+```console
 python -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
 ```
 
-For GPU execution, install the appropriate PyTorch build for the local CUDA version before installing the remaining packages. The released experiments can also be run on CPU, although repeated cross-validation and sensitivity analyses will be slower.
+Activate with `.venv\Scripts\activate` on Windows or `source .venv/bin/activate` on macOS/Linux, then run:
+
+```console
+python -m pip install -r requirements.txt
+python run_cycle.py predict
+```
+
+Open the notebook with `python -m jupyterlab closed_loop.ipynb`. The saved-checkpoint example and endpoint statistics provide quick numerical checks. Full refits and independent searches take longer and can vary across hardware and software builds.
 
 ## Reproducibility notes
 
-- Run all commands from the repository root so relative paths resolve correctly.
-- Do not modify row identifiers when editing spreadsheets.
-- Record the full configuration and software environment for every cycle.
-- Random seeds are set for Python, NumPy, PyTorch, and model training where supported.
-- Generated run directories contain configuration manifests, selected feature lists, model files, fold-level metrics, predictions, and figures.
-- Large generated models and intermediate candidate tables may be released through an archival repository if they exceed GitHub file-size limits.
+Run every entry point from the repository root. Keep input row identifiers and selected feature order intact. The checksums in `UPLOAD_MANIFEST.csv` cover every release file except the manifest itself. The public endpoint table supports evaluation of the published recommendations. Replaying their exact chronology requires the original recipe-level laboratory records.
 
-}
-```
-
-Replace all angle-bracket placeholders before making the repository public.

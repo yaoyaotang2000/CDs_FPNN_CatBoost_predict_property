@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+/outputs/*
+!/outputs/.gitkeep
+/data/observed_history.*
+catboost_info/
+~$*
+.DS_Store
+

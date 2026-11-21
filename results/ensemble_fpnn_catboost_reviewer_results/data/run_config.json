@@ -1,0 +1,88 @@
+{
+  "run_mode": "standard",
+  "task_mode": "color",
+  "experiment_file": "./data/output_with_molar_amount_pubchem.xlsx",
+  "smiles_path": "./data/compound_smiles.xlsx",
+  "feature_list_files": {
+    "Ex_max_nm": "./cd_catboost_feature_selection/Ex_max_nm_best_top20_feature_list.csv",
+    "Em_max_nm": "./cd_catboost_feature_selection/Em_max_nm_best_top35_feature_list.csv",
+    "QY_%": "./cd_catboost_feature_selection/QY_%_best_top35_feature_list.csv"
+  },
+  "color_windows": {
+    "Blue": [
+      440.0,
+      480.0
+    ],
+    "Green": [
+      500.0,
+      540.0
+    ],
+    "Yellow": [
+      560.0,
+      580.0
+    ],
+    "Orange": [
+      580.0,
+      630.0
+    ]
+  },
+  "ensemble_definition": "mean(concat(5 FPProcessNN, 5 CatBoost)) = 0.5NN + 0.5CB",
+  "config": {
+    "random_seed": 42,
+    "n_repeats": 20,
+    "initial_size": 20,
+    "budget": 10,
+    "seeds": [
+      42,
+      2024,
+      3407,
+      777,
+      1024
+    ],
+    "nn_epochs": 300,
+    "nn_lr": 0.002,
+    "nn_weight_decay": 0.0001,
+    "nn_batch_size": 64,
+    "nn_grad_clip": 1.0,
+    "nn_predict_batch_size": 512,
+    "cb_iterations": 2000,
+    "cb_learning_rate": 0.05,
+    "cb_depth": 4,
+    "cb_l2_leaf_reg": 5.0,
+    "cb_random_strength": 1.0,
+    "cb_subsample": 0.9,
+    "alpha": 0.7,
+    "color_softness_nm": 15.0,
+    "qy_min_percent": 0.0,
+    "qy_max_percent": 100.0,
+    "stokes_min_nm": 40.0,
+    "stokes_max_nm": 180.0,
+    "ucb_beta": 0.2,
+    "global_qy_weight": 0.6,
+    "global_stokes_weight": 0.4,
+    "top_quantile": 0.1,
+    "property_train_success_only": true,
+    "success_positive_threshold": 0.5,
+    "save_dir": "./ensemble_fpnn_catboost_reviewer_results",
+    "dpi": 300,
+    "strategies": [
+      "Random",
+      "Chemistry_heuristic",
+      "CatBoost_greedy",
+      "FPProcessNN_greedy",
+      "Ensemble_greedy",
+      "Ensemble_UCB"
+    ],
+    "initial_sizes": [
+      20,
+      40,
+      60,
+      80
+    ],
+    "initial_size_repeats": 10,
+    "initial_size_budget": 10,
+    "device": "auto",
+    "deterministic_torch": false,
+    "cache_model_predictions_within_repeat": true
+  }
+}

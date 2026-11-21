@@ -1,0 +1,6 @@
+﻿seed,model_path,n_features
+42,success_feature_selection_independent\models\catboost_success_selected_seed42.cbm,10
+2024,success_feature_selection_independent\models\catboost_success_selected_seed2024.cbm,10
+3407,success_feature_selection_independent\models\catboost_success_selected_seed3407.cbm,10
+777,success_feature_selection_independent\models\catboost_success_selected_seed777.cbm,10
+1024,success_feature_selection_independent\models\catboost_success_selected_seed1024.cbm,10

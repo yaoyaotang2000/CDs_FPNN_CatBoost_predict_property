@@ -1,0 +1,34 @@
+﻿target_color,cycle,current_measured_score,best_so_far_score,tolerance,patience_counter,previous_best_score,improvement,significant_improvement,strict_hit_seen,stop_rule_this_prefix,stop_latched,first_stop_cycle,after_first_stop,continue_recommendation_latched,budget_reached,n_measurements,n_eligible_measurements,n_eligible_cycles,cycle_gap_before,duplicate_recipe_present,reason
+Blue,1,0.6591671428571428,0.6591671428571428,0.02,0,,,False,True,False,False,,False,True,False,1,1,1,0,False,continue
+Blue,2,0.5822328571428572,0.6591671428571428,0.02,1,0.6591671428571428,0.0,False,True,False,False,,False,True,False,1,1,2,0,False,continue
+Blue,3,0.5914582490812217,0.6591671428571428,0.02,2,0.6591671428571428,0.0,False,True,False,False,,False,True,False,1,1,3,0,False,continue
+Blue,4,0.475321656701089,0.6591671428571428,0.02,3,0.6591671428571428,0.0,False,True,False,False,,False,True,False,1,1,4,0,False,continue
+Blue,5,0.383771428026963,0.6591671428571428,0.02,4,0.6591671428571428,0.0,False,True,True,True,5.0,False,False,False,1,1,5,0,False,patience reached
+Green,1,4.681120836120731e-28,4.681120836120731e-28,0.02,0,,,False,False,False,False,,False,True,False,1,1,1,0,False,no strict color hit yet
+Green,2,9.113532850780353e-09,9.113532850780353e-09,0.02,1,4.681120836120731e-28,9.113532850780353e-09,False,False,False,False,,False,True,False,1,1,2,0,False,no strict color hit yet
+Green,3,0.00012830726668782715,0.00012830726668782715,0.02,2,9.113532850780353e-09,0.00012829815315497638,False,False,False,False,,False,True,False,1,1,3,0,False,no strict color hit yet
+Green,4,4.726406642632354e-09,0.00012830726668782715,0.02,3,0.00012830726668782715,0.0,False,False,False,False,,False,True,False,1,1,4,0,False,no strict color hit yet
+Green,5,1.3296584718076938e-05,0.00012830726668782715,0.02,4,0.00012830726668782715,0.0,False,False,False,False,,False,True,False,1,1,5,0,False,no strict color hit yet
+Green,6,0.2207357142857143,0.2207357142857143,0.02,0,0.00012830726668782715,0.22060740701902648,True,True,False,False,,False,True,False,1,1,6,0,False,continue
+Green,7,0.2587942857142857,0.2587942857142857,0.02,0,0.2207357142857143,0.038058571428571386,True,True,False,False,,False,True,False,1,1,7,0,False,continue
+Green,8,0.38518714285714284,0.38518714285714284,0.02,0,0.2587942857142857,0.12639285714285714,True,True,False,False,,False,True,False,1,1,8,0,False,continue
+Green,9,0.3243214285714286,0.38518714285714284,0.02,1,0.38518714285714284,0.0,False,True,False,False,,False,True,False,1,1,9,0,False,continue
+Green,10,0.21028,0.38518714285714284,0.02,2,0.38518714285714284,0.0,False,True,False,False,,False,True,False,1,1,10,0,False,continue
+Green,11,0.31735714285714284,0.38518714285714284,0.02,3,0.38518714285714284,0.0,False,True,False,False,,False,True,False,1,1,11,0,False,continue
+Green,12,0.48113428571428574,0.48113428571428574,0.02,0,0.38518714285714284,0.0959471428571429,True,True,False,False,,False,True,False,1,1,12,0,False,continue
+Green,13,0.21585714285714286,0.48113428571428574,0.02,1,0.48113428571428574,0.0,False,True,False,False,,False,True,False,1,1,13,0,False,continue
+Green,14,0.00010947439475738016,0.48113428571428574,0.02,2,0.48113428571428574,0.0,False,True,False,False,,False,True,False,1,1,14,0,False,continue
+Green,15,0.24673142857142855,0.48113428571428574,0.02,3,0.48113428571428574,0.0,False,True,False,False,,False,True,False,1,1,15,0,False,continue
+Green,16,0.058454285714285716,0.48113428571428574,0.02,4,0.48113428571428574,0.0,False,True,True,True,16.0,False,False,True,1,1,16,0,False,maximum cycle budget reached; patience reached
+Orange,1,0.30975285714285716,0.30975285714285716,0.02,0,,,False,True,False,False,,False,True,False,1,1,1,0,False,continue
+Orange,2,0.35192589694226745,0.35192589694226745,0.02,0,0.30975285714285716,0.04217303979941028,True,True,False,False,,False,True,False,1,1,2,0,False,continue
+Orange,3,0.3427928571428571,0.35192589694226745,0.02,1,0.35192589694226745,0.0,False,True,False,False,,False,True,False,1,1,3,0,False,continue
+Orange,4,0.3490928571428572,0.35192589694226745,0.02,2,0.35192589694226745,0.0,False,True,False,False,,False,True,False,1,1,4,0,False,continue
+Orange,5,0.0974657142857143,0.35192589694226745,0.02,3,0.35192589694226745,0.0,False,True,False,False,,False,True,False,1,1,5,0,False,continue
+Orange,6,0.36677714285714286,0.36677714285714286,0.02,4,0.35192589694226745,0.01485124591487541,False,True,True,True,6.0,False,False,False,1,1,6,0,False,patience reached
+Yellow,1,0.33984857142857144,0.33984857142857144,0.02,0,,,False,True,False,False,,False,True,False,1,1,1,0,False,continue
+Yellow,2,0.3770014285714286,0.3770014285714286,0.02,0,0.33984857142857144,0.037152857142857154,True,True,False,False,,False,True,False,1,1,2,0,False,continue
+Yellow,3,0.31303000000000003,0.3770014285714286,0.02,1,0.3770014285714286,0.0,False,True,False,False,,False,True,False,1,1,3,0,False,continue
+Yellow,4,0.36266857142857145,0.3770014285714286,0.02,2,0.3770014285714286,0.0,False,True,False,False,,False,True,False,1,1,4,0,False,continue
+Yellow,5,0.32339,0.3770014285714286,0.02,3,0.3770014285714286,0.0,False,True,False,False,,False,True,False,1,1,5,0,False,continue
+Yellow,6,0.35264142857142855,0.3770014285714286,0.02,4,0.3770014285714286,0.0,False,True,True,True,6.0,False,False,False,1,1,6,0,False,patience reached

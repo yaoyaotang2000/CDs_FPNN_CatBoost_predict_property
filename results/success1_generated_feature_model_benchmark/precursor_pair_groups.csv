@@ -1,0 +1,146 @@
+﻿initial_row_id,precursor_pair_group,precursor_1,precursor_2
+1,glucose || l-tyrosine,Glucose,L-Tyrosine
+4,2-aminoterephthalic acid || l-serine,2-Aminoterephthalic acid,L-Serine
+5,melamine || salicylic acid,Melamine,Salicylic acid
+7,citric acid || l-tyrosine,L-Tyrosine,Citric acid
+11,l-threonine || p-aminobenzenesulfonic acid,L-Threonine,p-Aminobenzenesulfonic acid
+12,neutral red || p-aminophenol,Neutral Red,p-Aminophenol
+13,glucose || m-phenylenediamine,m-Phenylenediamine,Glucose
+14,2-aminoterephthalic acid || 2-aminoterephthalic acid,2-Aminoterephthalic acid,2-Aminoterephthalic acid
+15,l-lysine || salicylic acid,L-Lysine,Salicylic acid
+17,neutral red || p-aminophenol,Neutral Red,p-Aminophenol
+19,l-cysteine || salicylic acid,Salicylic acid,L-Cysteine
+21,m-phenylenediamine || salicylic acid,m-Phenylenediamine,Salicylic acid
+22,l-leucine || l-lysine,L-Leucine,L-Lysine
+23,l-tyrosine || p-aminophenol,p-Aminophenol,L-Tyrosine
+25,ethanolamine || salicylic acid,Ethanolamine,Salicylic acid
+26,l-cystine || salicylic acid,L-Cystine,Salicylic acid
+27,2-aminoterephthalic acid || l-threonine,2-Aminoterephthalic acid,L-Threonine
+28,2-aminoterephthalic acid || melamine,Melamine,2-Aminoterephthalic acid
+30,o-phenylenediamine || salicylic acid,Salicylic acid,o-Phenylenediamine
+31,ethanolamine || glucose,Glucose,Ethanolamine
+32,2-aminoterephthalic acid || salicylic acid,Salicylic acid,2-Aminoterephthalic acid
+33,l-phenylalanine || l-serine,L-Serine,L-Phenylalanine
+34,glycine || thiourea,Thiourea,Glycine
+35,melamine || neutral red,Melamine,Neutral Red
+36,glucose || terephthalic acid,Glucose,Terephthalic acid
+40,melamine || neutral red,Melamine,Neutral Red
+42,l-serine || p-aminobenzenesulfonic acid,p-Aminobenzenesulfonic acid,L-Serine
+43,2-aminoterephthalic acid || ethanolamine,Ethanolamine,2-Aminoterephthalic acid
+44,dl-methionine || ethanolamine,Ethanolamine,DL-Methionine
+45,o-phenylenediamine || terephthalic acid,o-Phenylenediamine,Terephthalic acid
+46,l-cysteine || l-cystine,L-Cysteine,L-Cystine
+47,dopamine hydrochloride || p-phenylenediamine,p-Phenylenediamine,Dopamine hydrochloride
+48,ethanolamine || urea,Ethanolamine,Urea
+49,l-cystine || neutral red,L-Cystine,Neutral Red
+50,glycine || tartaric acid,Tartaric acid,Glycine
+51,l-cystine || urea,L-Cystine,Urea
+52,l-cystine || p-aminobenzenesulfonic acid,L-Cystine,p-Aminobenzenesulfonic acid
+56,citric acid || l-threonine,Citric acid,L-Threonine
+57,l-leucine || thiourea,L-Leucine,Thiourea
+58,p-aminophenol || urea,p-Aminophenol,Urea
+59,neutral red || thiourea,Neutral Red,Thiourea
+60,thiourea || urea,Urea,Thiourea
+61,salicylic acid || terephthalic acid,Salicylic acid,Terephthalic acid
+63,ethanolamine || l-phenylalanine,Ethanolamine,L-Phenylalanine
+64,l-tyrosine || terephthalic acid,L-Tyrosine,Terephthalic acid
+66,tartaric acid || thiourea,Tartaric acid,Thiourea
+68,2-aminoterephthalic acid || l-serine,L-Serine,2-Aminoterephthalic acid
+69,l-cystine || p-phenylenediamine,p-Phenylenediamine,L-Cystine
+71,l-cystine || salicylic acid,Salicylic acid,L-Cystine
+72,neutral red || thiourea,Thiourea,Neutral Red
+73,p-aminobenzenesulfonic acid || p-aminobenzenesulfonic acid,p-Aminobenzenesulfonic acid,p-Aminobenzenesulfonic acid
+77,dl-methionine || ethanolamine,DL-Methionine,Ethanolamine
+78,ethanolamine || p-aminobenzenesulfonic acid,Ethanolamine,p-Aminobenzenesulfonic acid
+80,dopamine hydrochloride || urea,Urea,Dopamine hydrochloride
+81,glucose || polyaniline,Polyaniline,Glucose
+82,2-aminoterephthalic acid || p-aminophenol,p-Aminophenol,2-Aminoterephthalic acid
+83,2-aminoterephthalic acid || citric acid,Citric acid,2-Aminoterephthalic acid
+84,citric acid || dl-methionine,DL-Methionine,Citric acid
+85,dl-methionine || o-phenylenediamine,o-Phenylenediamine,DL-Methionine
+86,l-cystine || l-phenylalanine,L-Cystine,L-Phenylalanine
+87,l-cysteine || terephthalic acid,Terephthalic acid,L-Cysteine
+88,dopamine hydrochloride || l-tyrosine,Dopamine hydrochloride,L-Tyrosine
+92,l-lysine || p-aminobenzenesulfonic acid,L-Lysine,p-Aminobenzenesulfonic acid
+93,tartaric acid || thiourea,Thiourea,Tartaric acid
+94,neutral red || polyaniline,Polyaniline,Neutral Red
+95,l-phenylalanine || polyaniline,L-Phenylalanine,Polyaniline
+97,l-cystine || salicylic acid,Salicylic acid,L-Cystine
+98,l-cysteine || salicylic acid,Salicylic acid,L-Cysteine
+99,glycine || o-phenylenediamine,o-Phenylenediamine,Glycine
+100,l-cysteine || urea,Urea,L-Cysteine
+102,dl-methionine || p-aminobenzenesulfonic acid,p-Aminobenzenesulfonic acid,DL-Methionine
+105,l-serine || l-threonine,L-Serine,L-Threonine
+108,dopamine hydrochloride || l-threonine,Dopamine hydrochloride,L-Threonine
+109,l-serine || salicylic acid,Salicylic acid,L-Serine
+110,ethanolamine || melamine,Ethanolamine,Melamine
+112,dl-methionine || p-aminophenol,DL-Methionine,p-Aminophenol
+113,l-cysteine || p-phenylenediamine,L-Cysteine,p-Phenylenediamine
+114,ethanolamine || terephthalic acid,Terephthalic acid,Ethanolamine
+115,citric acid || polyaniline,Citric acid,Polyaniline
+116,l-threonine || salicylic acid,L-Threonine,Salicylic acid
+117,dl-methionine || thiourea,DL-Methionine,Thiourea
+118,2-aminoterephthalic acid || l-lysine,2-Aminoterephthalic acid,L-Lysine
+119,2-aminoterephthalic acid || dl-methionine,2-Aminoterephthalic acid,DL-Methionine
+120,glucose || urea,Glucose,Urea
+122,ethanolamine || p-aminobenzenesulfonic acid,Ethanolamine,p-Aminobenzenesulfonic acid
+125,l-cysteine || thiourea,L-Cysteine,Thiourea
+126,l-phenylalanine || l-threonine,L-Threonine,L-Phenylalanine
+127,l-phenylalanine || l-tyrosine,L-Tyrosine,L-Phenylalanine
+128,ethanolamine || glycine,Glycine,Ethanolamine
+129,m-phenylenediamine || p-aminobenzenesulfonic acid,p-Aminobenzenesulfonic acid,m-Phenylenediamine
+130,m-phenylenediamine || o-phenylenediamine,o-Phenylenediamine,m-Phenylenediamine
+132,l-lysine || salicylic acid,Salicylic acid,L-Lysine
+134,neutral red || p-phenylenediamine,p-Phenylenediamine,Neutral Red
+137,2-aminoterephthalic acid || m-phenylenediamine,2-Aminoterephthalic acid,m-Phenylenediamine
+139,l-phenylalanine || terephthalic acid,Terephthalic acid,L-Phenylalanine
+140,polyaniline || salicylic acid,Polyaniline,Salicylic acid
+143,m-phenylenediamine || p-aminophenol,m-Phenylenediamine,p-Aminophenol
+146,l-tyrosine || m-phenylenediamine,m-Phenylenediamine,L-Tyrosine
+147,m-phenylenediamine || melamine,Melamine,m-Phenylenediamine
+151,glucose || l-serine,L-Serine,Glucose
+153,ethanolamine || l-cysteine,Ethanolamine,L-Cysteine
+155,l-phenylalanine || thiourea,Thiourea,L-Phenylalanine
+157,2-aminoterephthalic acid || salicylic acid,Salicylic acid,2-Aminoterephthalic acid
+160,l-phenylalanine || p-phenylenediamine,p-Phenylenediamine,L-Phenylalanine
+162,p-aminobenzenesulfonic acid || polyaniline,p-Aminobenzenesulfonic acid,Polyaniline
+163,2-aminoterephthalic acid || l-leucine,2-Aminoterephthalic acid,L-Leucine
+165,l-serine || l-tyrosine,L-Serine,L-Tyrosine
+166,glycine || l-cysteine,L-Cysteine,Glycine
+167,glycine || l-serine,L-Serine,Glycine
+170,l-cysteine || o-phenylenediamine,o-Phenylenediamine,L-Cysteine
+172,l-leucine || l-serine,L-Leucine,L-Serine
+175,m-phenylenediamine || melamine,m-Phenylenediamine,Melamine
+177,l-cystine || l-threonine,L-Cystine,L-Threonine
+178,salicylic acid || thiourea,Salicylic acid,Thiourea
+180,2-aminoterephthalic acid || p-phenylenediamine,2-Aminoterephthalic acid,p-Phenylenediamine
+182,2-aminoterephthalic acid || o-phenylenediamine,o-Phenylenediamine,2-Aminoterephthalic acid
+183,glycine || melamine,Glycine,Melamine
+184,o-phenylenediamine || p-aminobenzenesulfonic acid,p-Aminobenzenesulfonic acid,o-Phenylenediamine
+186,l-phenylalanine || terephthalic acid,L-Phenylalanine,Terephthalic acid
+187,2-aminoterephthalic acid || thiourea,Thiourea,2-Aminoterephthalic acid
+189,l-lysine || m-phenylenediamine,L-Lysine,m-Phenylenediamine
+193,melamine || terephthalic acid,Melamine,Terephthalic acid
+195,l-tyrosine || o-phenylenediamine,o-Phenylenediamine,L-Tyrosine
+197,l-cystine || o-phenylenediamine,L-Cystine,o-Phenylenediamine
+199,ethanolamine || salicylic acid,Salicylic acid,Ethanolamine
+200,l-tyrosine || o-phenylenediamine,o-Phenylenediamine,L-Tyrosine
+202,glucose || neutral red,Neutral Red,Glucose
+203,neutral red || o-phenylenediamine,o-Phenylenediamine,Neutral Red
+205,m-phenylenediamine || neutral red,m-Phenylenediamine,Neutral Red
+206,m-phenylenediamine || neutral red,m-Phenylenediamine,Neutral Red
+207,2-aminoterephthalic acid || citric acid,Citric acid,2-Aminoterephthalic acid
+208,2-aminoterephthalic acid || glucose,Glucose,2-Aminoterephthalic acid
+209,2-aminoterephthalic acid || l-cystine,2-Aminoterephthalic acid,L-Cystine
+210,2-aminoterephthalic acid || l-lysine,2-Aminoterephthalic acid,L-Lysine
+211,2-aminoterephthalic acid || glucose,2-Aminoterephthalic acid,Glucose
+212,2-aminoterephthalic acid || 2-aminoterephthalic acid,2-Aminoterephthalic acid,2-Aminoterephthalic acid
+215,2-aminoterephthalic acid || terephthalic acid,Terephthalic acid,2-Aminoterephthalic acid
+217,melamine || neutral red,Neutral Red,Melamine
+218,dl-methionine || neutral red,DL-Methionine,Neutral Red
+219,l-cysteine || neutral red,L-Cysteine,Neutral Red
+220,l-serine || neutral red,L-Serine,Neutral Red
+221,l-cysteine || neutral red,Neutral Red,L-Cysteine
+222,neutral red || salicylic acid,Salicylic acid,Neutral Red
+223,l-cysteine || neutral red,Neutral Red,L-Cysteine
+226,l-leucine || neutral red,L-Leucine,Neutral Red
