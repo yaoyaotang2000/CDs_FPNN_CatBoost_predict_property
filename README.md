@@ -4,10 +4,19 @@ Code and numerical data for *Ensemble Learning-Driven Closed-Loop Optimization f
 
 ## Workflow at a glance
 
-The experimental closed loop was developed in Jupyter. Start with **[closed_loop.ipynb](closed_loop.ipynb)** after installing the dependencies below. The notebook demonstrates a saved prediction, then prepares the initial data, fits a reduced ensemble and runs a two-trial Ax search for each color. The same three computational stages can be run individually from `scripts/`.
+1. Standardize the initial experimental data and the prospectively observed history.
+2. Define synthesis success and train a five-seed CatBoost success-classifier ensemble.
+3. Retain experimentally successful rows for optical-property regression.
+4. Train the FPNN and target-specific CatBoost regressors.
+5. Form the property ensemble:
 
-For a first check that takes no retraining, run `python run_cycle.py predict` from the repository root. For the example using DL-methionine and 2-aminoterephthalic acid, the cycle-1 fit predicts **359.82 nm excitation, 450.08 nm emission, 56.56% QY and a success score of 0.9988**.
+   \[
+   \hat y_{\mathrm{ens}}=0.5\hat y_{\mathrm{FPNN}}+0.5\hat y_{\mathrm{CatBoost}}.
+   \]
 
+6. Search the predefined mixed discrete synthesis space using success-constrained BO–UCB.
+7. Experimentally evaluate selected recipes, append the observations, retrain the models, and repeat.
+8. Evaluate the prospective loop using prediction errors, hit rates, Pareto-front expansion, and hypervolume gain.
 ## Repository organization
 
 ```text
@@ -48,7 +57,7 @@ The numbered entry points in `scripts/` contain the update, fit and search code 
 | --- | --- |
 | [Initial experiments](data/output_with_molar_amount_pubchem.xlsx) | 224 labeled recipes with synthesis conditions and optical measurements. |
 | [Compound structures](data/compound_smiles.xlsx) | Chemical names and SMILES used to construct descriptors and fingerprints. |
-| [Prospective endpoints](data/validation.csv) | Predictions and measurements for 33 in-protocol recommendations, and ensemble dispersion for the 24 rows with a verified match. Used for errors, strict hits, stopping trajectories and hypervolume. |
+| [Prospective endpoints](data/observed_history.csv) | Predictions and measurements for 33 in-protocol recommendations, and ensemble dispersion for the 24 rows with a verified match. Used for errors, strict hits, stopping trajectories and hypervolume. |
 
 The release includes the initial recipes, the two trained ensembles and the numerical tables for the reported results. The laboratory's round-by-round recipe history and production logs remain local. The 33 endpoint rows support outcome analysis. Continuing the closed loop requires new measured recipes with the input fields described below.
 
@@ -74,11 +83,13 @@ This command compares FPNN, CatBoost and three FPNN/CatBoost mixtures (30/70, 50
 
 For each color the code normalizes QY and Stokes shift to fixed bounds of 0–100% and 40–180 nm. A Gaussian penalty with a width of 10 nm reduces the score outside the target window. The acquisition score multiplies the success probability by the sum of the expected score and β times a dispersion term derived from the ensemble. The default QY weight α is 0.70 and β is 0.20. Candidates with a success score below 0.50 have zero acquisition value.
 
-The initial table contains 28 precursor identities, including polyaniline. The notebook's Ax search lists 27 identities and omits polyaniline. The two precursor positions each accept five masses (0.2–1.0 g in 0.2 g steps). There are five solvents at 15 mL, four temperatures (160–220 °C in 20 °C steps) and three durations (4, 6 or 8 h). This yields **27 × 27 × 5 × 5 × 5 × 4 × 3 = 1,093,500 ordered parameter combinations** before equivalence and previously tested recipes are considered. Identical precursor identities are allowed. Tested recipes are matched using unordered precursor–mass pairs.
+The initial table contains 28 precursor identities, including polyaniline. The notebook's Ax search lists 27 identities and omits polyaniline. The two precursor positions each accept five masses (0.2–1.0 g in 0.2 g steps). There are five solvents at 15 mL, four temperatures (160–220 °C in 20 °C steps) and three durations (4, 6 or 8 h). This yields **28 × 28 × 5 × 5 × 5 × 4 × 3 = 1,176,000 ordered parameter combinations** before equivalence and previously tested recipes are considered. Identical precursor identities are allowed. Tested recipes are matched using unordered precursor–mass pairs.
 
 The final configuration calls Ax managed optimization with 200 trials per run, five runs per active color, base seed 42 and one recommendation per active color. Ax selects its generation strategy. Historical settings varied across fits. The acquisition interval for blue is 430–480 nm. The strict experimental hit definition in Table S8 uses 440–480 nm for blue, 500–540 for green, 560–580 for yellow and 580–630 for orange, inclusive for the intended target.
 
 ## Closed-loop update and stopping
+
+Start with **[closed_loop.ipynb](closed_loop.ipynb)** after installing the dependencies below. The same three computational stages can be run individually from `scripts/`.
 
 For the initial cycle, execute these commands in order. Steps 02 and 03 automatically select the latest prepared run. Supply the printed directory using `--run-dir` to choose a specific run.
 
@@ -88,32 +99,14 @@ python scripts/02_train_fp_catboost_cycle.py --cycle 1
 python scripts/03_ax_bo_search_cycle.py --cycle 1
 ```
 
-Alternatively, `python run_cycle.py quick` runs all three steps with one training seed, one neural-network epoch, five boosting iterations and two Ax trials per color. `python run_cycle.py cycle` uses all five seeds (42, 2024, 3407, 777, 1024), 300 epochs and 2,000 boosting iterations. Each execution starts a timestamped directory in `outputs/closed_loop_runs/`. Its `data/` subdirectory contains the run configuration, evaluated candidates and final recommendations.
-
-After measuring a new batch, run e.g. `python run_cycle.py cycle --cycle 2 --history my_measurements.xlsx`. CSV is also supported. Include `cycle`, `target_color`, `precursor_1`, `precursor_2`, `mass_1_g`, `mass_2_g`, `pre_1_mmol`, `pre_2_mmol`, `reagent_1`, `reagent_1_mL`, `temperature`, `time_h`, `Ex_max_nm`, `Em_max_nm`, `QY_%`, `Stokes_shift_nm` and `success`. Use the workbook's compound names, temperature in °C and time in hours. Only measurements from earlier cycles enter the run snapshot for training, stopping and tested-recipe exclusion.
-
 Stopping is evaluated per target color once a measured emission has reached its search window. The final settings use a ceiling of 16 cycles and a patience of four cycles after at least three completed cycles. An improvement must exceed the greater of 0.02 score units and 3% of the previous best. The paper's retrospective stopping tables apply the evaluation windows to the measured endpoints. The additional seventh yellow measurement lies outside the 33-row cohort.
 
 ## Sensitivity and robustness analyses
 
-| Analysis | Command and scope |
-| --- | --- |
-| Objective and exploration weights (Figs. S9–S10) | `python scripts/weight_sensitivity_success_filtered_3runs.py` rescores both archived Ax-visited pools and aggregates the individual runs (three seeds per condition). Each grid is read from its saved settings. To search again with a locally trained model, supply `--run-dir` and `--study alpha` or `--study beta`. Fresh searches use 100 Ax trials per condition and seed. |
-| Interpretation (Fig. 4, Tables S18–S19) | `python scripts/explain_fpnn_catboost_ensemble.py` runs grouped permutation, CatBoost SHAP and molecular-proxy comparisons on the public cycle-1 fit and initial data. These are in-sample diagnostics. The paper's cycle-17 numerical results are in `results/interpretation/`. To repeat that calculation with the corresponding local data, supply the cycle-17 checkpoint via `--run-dir` and its recipe table via `--expanded-training-file`. |
-| Process encoder and learning curves | `python scripts/fp_process_encoder_ablation_learning_curve.py` varies the process encoder and training fraction. |
-| Fingerprint architecture | `python scripts/fp_encoder_dimension_ablation_ensemble.py` compares eight encoders with the CatBoost component held fixed for each fold. Both encoder entry points default to initial data. Use `--history` with the matching local recipe workbook for the expanded retrospective cohort. Saved study outputs are under `results/`. |
-| Pareto fronts (Fig. 3, Table S15) | `python scripts/analyze_history_pareto_hv.py` combines the initial experiments and public endpoints, with 3,000 bootstrap samples and seed 2026. Expected pooled normalized hypervolume increases from 0.48830 to 0.53161, a gain of 0.04331 (8.87%). |
+
 
 ### Paper figures and additional review analyses
 
-| Result | Reproduction |
-| --- | --- |
-| Fig. 2, Figs. S4–S8 | `validation/fp_process_catboost_ensemble_cv_success_only.py` and the modality, feature-count and encoder studies provide the corresponding model comparisons. The retrospective success-filter comparison in Fig. S4 used 257 labeled rows, of which 178 were successful. Its summary is in `results/success_filter_comparison/`. |
-| Fig. 3, Fig. S17, Tables S10–S17 | `python -m analysis.tables_figures` recalculates strict hits (23/33), errors by stage, and the dispersion–error association on 24 matched rows. The emission MAE is 23.30 nm at table precision and 23.28 nm with unrounded predictions. `python -m analysis.stopping --no-plots --output-dir outputs/stopping` reconstructs the per-color stopping trajectories. |
-| Fig. S11 and Table S24 | `python -m analysis.tables_figures` also summarizes the saved 20-repeat trajectories. UCB and greedy each achieve a 40.75% mean top-decile hit rate. A new search can be run with `python -m validation.ensemble_fpnn_catboost_reviewer_benchmark_complete_v2 --run-mode standard`. The separate three-repeat study in `results/ucb_vs_greedy_reviewer_analysis/` supplies response Table R1. |
-| Table S21 | `python -m validation.compare_random_vs_precursor_grouped_success` compares random, grouped and leave-one-precursor-pair-out splits. Archived fold membership, held-out predictions and per-repeat metrics are in `results/success1_generated_feature_model_benchmark/`. |
-| Table S22 | `python -m analysis.paired_models gate` holds the property predictions fixed and evaluates three success-scoring policies across three stratified 65/35 splits and four color tasks. Each policy selects ten candidates per task and split. |
-| Table S23 | `python -m analysis.paired_models heads` compares a three-output FPNN with three independent single-output FPNNs on 145 successful recipes and the same 15 outer folds. |
 
 The new review calculations write to `outputs/revision/`. The numerical results supplied with the manuscript are in `results/revision/`. Some original development scripts in `validation/` write to their own output directories or regenerate feature lists. Use a separate checkout when repeating feature selection.
 
